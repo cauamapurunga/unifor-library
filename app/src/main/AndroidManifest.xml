@@ -11,6 +11,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.UniforLibrary">
+
         <activity
             android:name=".login.LoginActivity"
             android:exported="true"
@@ -18,20 +19,27 @@
             android:theme="@style/Theme.UniforLibrary">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".login.RegisterActivity"
             android:exported="false"
             android:label="Register"
             android:theme="@style/Theme.UniforLibrary" />
+
         <activity
             android:name=".MainActivity"
-            android:exported="true"
+            android:exported="false"
             android:label="@string/app_name"
             android:theme="@style/Theme.UniforLibrary" />
+
+        <activity
+            android:name=".reservation.MyReservationsActivity"
+            android:exported="false"
+            android:theme="@style/Theme.UniforLibrary" />
+
     </application>
 
 </manifest>
