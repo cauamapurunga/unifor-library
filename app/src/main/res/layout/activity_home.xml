@@ -14,7 +14,7 @@
         android:layout_width="138dp"
         android:layout_height="66dp"
         android:backgroundTint="#E0D9D9"
-        android:text="Reservass"
+        android:text="Reservas"
         android:textColor="#121111"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

@@ -22,7 +22,7 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun setupRecyclerViews(){
-        //Consultar Acervoa
+        //Consultar Acervo
         consultarAcervoRecyclerView = findViewById(R.id.btn_search_acervos)
         consultarAcervoRecyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL,false)
 
