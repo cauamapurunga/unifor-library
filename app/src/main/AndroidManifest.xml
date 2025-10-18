@@ -40,6 +40,12 @@
             android:exported="false"
             android:theme="@style/Theme.UniforLibrary" />
 
+        <activity
+            android:name=".profile.EditProfileActivity"
+            android:exported="false"
+            android:label="Perfil"
+            android:theme="@style/Theme.UniforLibrary" />
+
     </application>
 
 </manifest>
