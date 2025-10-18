@@ -19,6 +19,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.uniforlibrary.R
+import com.example.uniforlibrary.profile.EditProfileActivity
 import com.example.uniforlibrary.home.HomeActivity
 import com.example.uniforlibrary.reservation.MyReservationsActivity
 import com.example.uniforlibrary.ui.theme.UniforLibraryTheme
@@ -101,6 +102,9 @@ fun LoginScreen() {
         }
         TextButton(onClick = { context.startActivity(Intent(context, HomeActivity::class.java)) }) {
             Text("Home (Temporário)")
+        }
+        TextButton(onClick = { context.startActivity(Intent(context, EditProfileActivity::class.java)) }) {
+            Text("Editar Perfil (Temporário)")
         }
     }
 }
