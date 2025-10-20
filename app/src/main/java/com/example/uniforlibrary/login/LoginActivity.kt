@@ -19,9 +19,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.uniforlibrary.R
-import com.example.uniforlibrary.profile.EditProfileActivity
 import com.example.uniforlibrary.home.HomeActivity
-import com.example.uniforlibrary.reservation.MyReservationsActivity
 import com.example.uniforlibrary.ui.theme.UniforLibraryTheme
 
 class LoginActivity : ComponentActivity() {
@@ -81,13 +79,15 @@ fun LoginScreen() {
         )
         Spacer(modifier = Modifier.height(8.dp))
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
-            TextButton(onClick = { /* TODO */ }) {
+            TextButton(onClick = { /* TODO: Recuperação de senha */ }) {
                 Text("Esqueci minha senha")
             }
         }
         Spacer(modifier = Modifier.height(24.dp))
         Button(
-            onClick = { /* TODO */ },
+            onClick = {
+                context.startActivity(Intent(context, HomeActivity::class.java))
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(50.dp),
@@ -99,12 +99,6 @@ fun LoginScreen() {
         Spacer(modifier = Modifier.height(8.dp))
         TextButton(onClick = { context.startActivity(Intent(context, RegisterActivity::class.java)) }) {
             Text("Criar uma conta")
-        }
-        TextButton(onClick = { context.startActivity(Intent(context, HomeActivity::class.java)) }) {
-            Text("Home (Temporário)")
-        }
-        TextButton(onClick = { context.startActivity(Intent(context, EditProfileActivity::class.java)) }) {
-            Text("Editar Perfil (Temporário)")
         }
     }
 }

@@ -9,8 +9,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.MenuBook
 import androidx.compose.material.icons.filled.Notifications
-import androidx.compose.material.icons.filled.MenuBook
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -100,9 +100,11 @@ fun MyReservationsScreen(modifier: Modifier = Modifier) {
                             text = title,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
-                            fontSize = 12.sp
+                            fontSize = 13.sp,
+                            fontWeight = if (index == selectedTabIndex) FontWeight.Bold else FontWeight.Normal
                         )
-                    }
+                    },
+                    modifier = Modifier.padding(horizontal = 4.dp)
                 )
             }
         }
@@ -166,15 +168,12 @@ fun ReservationCard(
                     .padding(end = 16.dp),
                 contentAlignment = Alignment.Center
             ) {
-
-
                 Icon(
-                    imageVector = Icons.Filled.MenuBook,
+                    imageVector = Icons.AutoMirrored.Filled.MenuBook,
                     contentDescription = "Capa do livro: ${reservation.title}",
                     modifier = Modifier.size(40.dp),
                     tint = Color.Gray
                 )
-
             }
 
             Column(modifier = Modifier.weight(1f)) {
