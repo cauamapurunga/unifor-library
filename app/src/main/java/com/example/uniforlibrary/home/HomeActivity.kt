@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.uniforlibrary.R
 import com.example.uniforlibrary.profile.EditProfileActivity
+import com.example.uniforlibrary.reservation.AcervoActivity
 import com.example.uniforlibrary.ui.theme.UniforLibraryTheme
 
 class HomeActivity : ComponentActivity() {
@@ -416,7 +417,7 @@ fun HighlightChip(text: String) {
 
 // Função para navegar para a tela de Reservas
 private fun navigateToReservations(context: Context) {
-    val intent = Intent(context, com.example.uniforlibrary.acervo.AcervoActivity::class.java)
+    val intent = Intent(context, AcervoActivity::class.java)
     context.startActivity(intent)
 }
 
