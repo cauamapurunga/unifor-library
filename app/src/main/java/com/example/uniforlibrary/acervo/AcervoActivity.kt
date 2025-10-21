@@ -25,9 +25,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.uniforlibrary.R
+import com.example.uniforlibrary.home.HomeActivity
 import com.example.uniforlibrary.profile.EditProfileActivity
 import com.example.uniforlibrary.reservation.MyReservationsActivity
-import com.example.uniforlibrary.home.HomeActivity
 import com.example.uniforlibrary.ui.theme.UniforLibraryTheme
 
 class AcervoActivity : ComponentActivity() {
@@ -45,11 +45,7 @@ class AcervoActivity : ComponentActivity() {
 @Composable
 fun AcervoScreen() {
     val context = LocalContext.current
-
-    // inicialmente "Acervo" selecionado
     var selectedItemIndex by remember { mutableIntStateOf(1) }
-
-    // itens da nav — 5 itens (igual ao Home, mas com Relatórios)
     val navigationItems = listOf(
         BottomNavItem("Home", Icons.Default.Home, 0),
         BottomNavItem("Acervo", Icons.AutoMirrored.Filled.MenuBook, 1),
@@ -57,8 +53,6 @@ fun AcervoScreen() {
         BottomNavItem("Reservas", Icons.Default.Bookmark, 3),
         BottomNavItem("Relatórios", Icons.Default.Assessment, 4)
     )
-
-    // fluxo interno simples: list / add / edit
     var currentScreen by remember { mutableStateOf("list") }
     var showDialog by remember { mutableStateOf(false) }
     var dialogMessage by remember { mutableStateOf("") }
@@ -109,64 +103,37 @@ fun AcervoScreen() {
             )
         },
         bottomBar = {
-            Surface(
-                tonalElevation = 0.dp,
-                shadowElevation = 16.dp,
-                color = Color.White
+            NavigationBar(
+                containerColor = Color.White,
+                modifier = Modifier.height(80.dp)
             ) {
-                NavigationBar(
-                    containerColor = Color.White,
-                    tonalElevation = 0.dp,
-                    modifier = Modifier
-                        .height(80.dp)
-                        .padding(vertical = 8.dp, horizontal = 4.dp)
-                ) {
-                    navigationItems.forEach { item ->
-                        NavigationBarItem(
-                            selected = selectedItemIndex == item.index,
-                            onClick = {
-                                selectedItemIndex = item.index
-                                when (item.index) {
-                                    0 -> navigateToHome(context)
-                                    1 -> { /* já está em Acervo */ }
-                                    2 -> { /* TODO: Emprestimos */ }
-                                    3 -> navigateToReservations(context)
-                                    4 -> { /* TODO: Relatórios */ }
-                                }
-                            },
-                            label = {
-                                Text(
-                                    item.label,
-                                    fontSize = 9.sp,
-                                    maxLines = 2,
-                                    textAlign = TextAlign.Center,
-                                    lineHeight = 11.sp,
-                                    fontWeight = if (selectedItemIndex == item.index)
-                                        FontWeight.Bold else FontWeight.Medium
-                                )
-                            },
-                            icon = {
-                                Icon(
-                                    imageVector = item.icon,
-                                    contentDescription = item.label,
-                                    modifier = Modifier.size(24.dp)
-                                )
-                            },
-                            colors = NavigationBarItemDefaults.colors(
-                                selectedIconColor = MaterialTheme.colorScheme.primary,
-                                selectedTextColor = MaterialTheme.colorScheme.primary,
-                                unselectedIconColor = Color(0xFF666666),
-                                unselectedTextColor = Color(0xFF666666),
-                                indicatorColor = Color.Transparent
-                            )
+                navigationItems.forEach { item ->
+                    NavigationBarItem(
+                        selected = selectedItemIndex == item.index,
+                        onClick = {
+                            selectedItemIndex = item.index
+                            when (item.index) {
+                                0 -> navigateToHome(context)
+                                1 -> { /* já está em Acervo */ }
+                                2 -> { /* TODO: Emprestimos */ }
+                                3 -> navigateToReservations(context)
+                                4 -> { /* TODO: Relatórios */ }
+                            }
+                        },
+                        label = { Text(item.label, fontSize = 9.sp) },
+                        icon = { Icon(item.icon, contentDescription = item.label) },
+                        colors = NavigationBarItemDefaults.colors(
+                            selectedIconColor = MaterialTheme.colorScheme.primary,
+                            selectedTextColor = MaterialTheme.colorScheme.primary,
+                            unselectedIconColor = Color(0xFF666666),
+                            unselectedTextColor = Color(0xFF666666),
+                            indicatorColor = Color.Transparent
                         )
-                    }
+                    )
                 }
             }
         },
         floatingActionButton = {
-            // FAB igual ao segundo anexo (canto inferior direito)
-            // aparece só na listagem
             if (currentScreen == "list") {
                 FloatingActionButton(
                     onClick = { currentScreen = "add" },
@@ -176,8 +143,7 @@ fun AcervoScreen() {
                     Icon(Icons.Default.Add, contentDescription = "Adicionar", tint = Color.White)
                 }
             }
-        },
-        containerColor = MaterialTheme.colorScheme.surface
+        }
     ) { innerPadding ->
         Column(
             modifier = Modifier
@@ -193,9 +159,7 @@ fun AcervoScreen() {
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.primary
                     )
-
                     Spacer(modifier = Modifier.height(16.dp))
-
                     OutlinedTextField(
                         value = "",
                         onValueChange = {},
@@ -204,21 +168,35 @@ fun AcervoScreen() {
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(12.dp)
                     )
-
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    BookCard("PathExileLORE", "Marak - 2020", "★5") {
-                        currentScreen = "edit"
-                    }
+                    // ALTERAÇÃO 1: Passando a nova função onRemove para o BookCard
+                    BookCard(
+                        title = "PathExileLORE",
+                        subtitle = "Marak - 2020",
+                        rating = "★5",
+                        onEdit = { currentScreen = "edit" },
+                        onRemove = {
+                            dialogMessage = "Tem certeza que deseja remover esta obra?"
+                            showDialog = true
+                        }
+                    )
                     Spacer(modifier = Modifier.height(8.dp))
-                    BookCard("WOW", "Aliens - 1977", "★4.8") {
-                        currentScreen = "edit"
-                    }
+                    BookCard(
+                        title = "WOW",
+                        subtitle = "Aliens - 1977",
+                        rating = "★4.8",
+                        onEdit = { currentScreen = "edit" },
+                        onRemove = {
+                            dialogMessage = "Tem certeza que deseja remover esta obra?"
+                            showDialog = true
+                        }
+                    )
                 }
 
                 "add" -> {
                     AddEditContent(
-                        title = "Adicionar Obra",
+                        title = "Adicionar Acervo",
                         onBack = { currentScreen = "list" },
                         onConfirm = {
                             dialogMessage = "Tem certeza que deseja adicionar a obra ao acervo?"
@@ -229,7 +207,7 @@ fun AcervoScreen() {
 
                 "edit" -> {
                     AddEditContent(
-                        title = "Editar Obra",
+                        title = "Editar Acervo",
                         onBack = { currentScreen = "list" },
                         onConfirm = {
                             dialogMessage = "Tem certeza que deseja editar a obra do acervo?"
@@ -245,13 +223,17 @@ fun AcervoScreen() {
         ConfirmDialog(
             message = dialogMessage,
             onDismiss = { showDialog = false },
-            onConfirm = { showDialog = false }
+            onConfirm = {
+                showDialog = false
+                // Lógica de confirmação aqui (adicionar, editar ou remover)
+            }
         )
     }
 }
 
+// ALTERAÇÃO 2: Adicionamos um novo parâmetro 'onRemove' para que o Card possa "avisar" a tela.
 @Composable
-fun BookCard(title: String, subtitle: String, rating: String, onEdit: () -> Unit) {
+fun BookCard(title: String, subtitle: String, rating: String, onEdit: () -> Unit, onRemove: () -> Unit) {
     Card(
         Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = Color.White),
@@ -265,7 +247,8 @@ fun BookCard(title: String, subtitle: String, rating: String, onEdit: () -> Unit
             Text(rating, color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.SemiBold)
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
                 TextButton(onClick = onEdit) { Text("Editar") }
-                TextButton(onClick = { /* TODO Remover */ }) { Text("Remover") }
+                // Agora o botão de remover chama a função que foi passada para ele.
+                TextButton(onClick = onRemove) { Text("Remover") }
             }
         }
     }
@@ -285,9 +268,7 @@ fun AddEditContent(title: String, onBack: () -> Unit, onConfirm: () -> Unit) {
                 color = MaterialTheme.colorScheme.primary
             )
         )
-
         Spacer(modifier = Modifier.height(12.dp))
-
         OutlinedTextField(value = "", onValueChange = {}, label = { Text("Título") }, modifier = Modifier.fillMaxWidth())
         Spacer(modifier = Modifier.height(8.dp))
         OutlinedTextField(value = "", onValueChange = {}, label = { Text("Autor") }, modifier = Modifier.fillMaxWidth())
@@ -305,9 +286,7 @@ fun AddEditContent(title: String, onBack: () -> Unit, onConfirm: () -> Unit) {
         }
         Spacer(modifier = Modifier.height(12.dp))
         OutlinedTextField(value = "", onValueChange = {}, label = { Text("Descrição") }, modifier = Modifier.fillMaxWidth())
-
         Spacer(modifier = Modifier.height(20.dp))
-
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
             OutlinedButton(onClick = onBack) {
                 Icon(Icons.Default.ArrowBack, contentDescription = null)
@@ -315,22 +294,23 @@ fun AddEditContent(title: String, onBack: () -> Unit, onConfirm: () -> Unit) {
                 Text("Voltar")
             }
             Button(onClick = onConfirm, colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)) {
-                Text(if (title.contains("Editar")) "Editar" else "Adicionar")
+                Text(if (title.contains("Editar")) "Confirmar" else "Adicionar")
             }
         }
     }
 }
 
+// ALTERAÇÃO 3: Trocando o texto dos botões para ficar mais genérico e atender sua solicitação.
 @Composable
 fun ConfirmDialog(message: String, onDismiss: () -> Unit, onConfirm: () -> Unit) {
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text(message, textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth()) },
         confirmButton = {
-            TextButton(onClick = onConfirm) { Text("Sim", color = MaterialTheme.colorScheme.primary) }
+            TextButton(onClick = onConfirm) { Text("Confirmar", color = MaterialTheme.colorScheme.primary) }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) { Text("Não") }
+            TextButton(onClick = onDismiss) { Text("Cancelar") }
         },
         shape = RoundedCornerShape(20.dp)
     )

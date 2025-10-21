@@ -46,6 +46,12 @@
             android:label="Perfil"
             android:theme="@style/Theme.UniforLibrary" />
 
+        <activity
+            android:name=".acervo.AcervoActivity"
+            android:exported="false"
+            android:label="Acervo"
+            android:theme="@style/Theme.UniforLibrary" />
+
     </application>
 
 </manifest>
