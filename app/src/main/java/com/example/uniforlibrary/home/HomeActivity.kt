@@ -33,8 +33,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.uniforlibrary.R
+import com.example.uniforlibrary.acervo.AcervoActivity
 import com.example.uniforlibrary.profile.EditProfileActivity
-import com.example.uniforlibrary.reservation.AcervoActivity
 import com.example.uniforlibrary.ui.theme.UniforLibraryTheme
 
 class HomeActivity : ComponentActivity() {
