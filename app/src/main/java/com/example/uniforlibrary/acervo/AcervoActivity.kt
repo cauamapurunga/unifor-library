@@ -1,43 +1,41 @@
 package com.example.uniforlibrary.acervo
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.background
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.MenuBook
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.uniforlibrary.R
+import com.example.uniforlibrary.home.HomeActivity
+import com.example.uniforlibrary.profile.EditProfileActivity
+import com.example.uniforlibrary.reservation.MyReservationsActivity
 import com.example.uniforlibrary.ui.theme.UniforLibraryTheme
-
-data class BookItem(
-    val id: Int,
-    val title: String,
-    val author: String,
-    val publicationDate: String,
-    val status: String,
-    val positionInQueue: Int? = null
-)
 
 class AcervoActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             UniforLibraryTheme {
-                AcervoScreen(onBackClick = { finish() })
+                AcervoScreen()
             }
         }
     }
@@ -45,46 +43,40 @@ class AcervoActivity : ComponentActivity() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AcervoScreen(onBackClick: () -> Unit = {}) {
-    var selectedTabIndex by remember { mutableIntStateOf(0) }
-    val tabs = listOf("Todos", "Disponíveis", "Aguardando", "Devolvidos")
-
-    val allBooks = remember {
-        listOf(
-            BookItem(1, "How to build your upper/lower exercises", "Autor #1", "02/09/2025", "Aguardando", 2),
-            BookItem(2, "WOW", "Autor X", "02/09/2025", "Devolvido"),
-            BookItem(3, "O Poder do Hábito", "Charles Duhigg", "15/08/2025", "Disponível"),
-            BookItem(4, "O Guia do Mochileiro das Galáxias", "Douglas Adams", "10/07/2025", "Aguardando", 5),
-            BookItem(5, "1984", "George Orwell", "20/06/2025", "Disponível"),
-            BookItem(6, "A Revolução dos Bichos", "George Orwell", "18/06/2025", "Devolvido")
-        )
-    }
-
-    val filteredBooks = remember(selectedTabIndex) {
-        when (tabs[selectedTabIndex]) {
-            "Disponíveis" -> allBooks.filter { it.status == "Disponível" }
-            "Aguardando" -> allBooks.filter { it.status == "Aguardando" }
-            "Devolvidos" -> allBooks.filter { it.status == "Devolvido" }
-            else -> allBooks
-        }
-    }
+fun AcervoScreen() {
+    val context = LocalContext.current
+    var selectedItemIndex by remember { mutableIntStateOf(1) }
+    val navigationItems = listOf(
+        BottomNavItem("Home", Icons.Default.Home, 0),
+        BottomNavItem("Acervo", Icons.AutoMirrored.Filled.MenuBook, 1),
+        BottomNavItem("Empréstimos", Icons.Default.Book, 2),
+        BottomNavItem("Reservas", Icons.Default.Bookmark, 3),
+        BottomNavItem("Relatórios", Icons.Default.Assessment, 4)
+    )
+    var currentScreen by remember { mutableStateOf("list") }
+    var showDialog by remember { mutableStateOf(false) }
+    var dialogMessage by remember { mutableStateOf("") }
 
     Scaffold(
         topBar = {
             TopAppBar(
                 title = {
-                    Text(
-                        "Reservas",
-                        fontWeight = FontWeight.Bold,
-                        color = Color.White
-                    )
-                },
-                navigationIcon = {
-                    IconButton(onClick = onBackClick) {
-                        Icon(
-                            Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Voltar",
-                            tint = Color.White
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.logo_branca),
+                            contentDescription = "Logo Unifor",
+                            modifier = Modifier.size(50.dp)
+                        )
+                        Spacer(modifier = Modifier.width(12.dp))
+                        Text(
+                            text = "Acervo",
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Bold,
+                            lineHeight = 18.sp,
+                            color = Color.White
                         )
                     }
                 },
@@ -96,7 +88,7 @@ fun AcervoScreen(onBackClick: () -> Unit = {}) {
                             tint = Color.White
                         )
                     }
-                    IconButton(onClick = { /* TODO: Perfil */ }) {
+                    IconButton(onClick = { navigateToProfile(context) }) {
                         Icon(
                             Icons.Default.Person,
                             contentDescription = "Perfil",
@@ -105,205 +97,248 @@ fun AcervoScreen(onBackClick: () -> Unit = {}) {
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primary
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    titleContentColor = Color.White
                 )
             )
+        },
+        bottomBar = {
+            NavigationBar(
+                containerColor = Color.White,
+                modifier = Modifier.height(80.dp)
+            ) {
+                navigationItems.forEach { item ->
+                    NavigationBarItem(
+                        selected = selectedItemIndex == item.index,
+                        onClick = {
+                            selectedItemIndex = item.index
+                            when (item.index) {
+                                0 -> navigateToHome(context)
+                                1 -> { /* já está em Acervo */ }
+                                2 -> { /* TODO: Emprestimos */ }
+                                3 -> navigateToReservations(context)
+                                4 -> { /* TODO: Relatórios */ }
+                            }
+                        },
+                        label = { Text(item.label, fontSize = 9.sp) },
+                        icon = { Icon(item.icon, contentDescription = item.label) },
+                        colors = NavigationBarItemDefaults.colors(
+                            selectedIconColor = MaterialTheme.colorScheme.primary,
+                            selectedTextColor = MaterialTheme.colorScheme.primary,
+                            unselectedIconColor = Color(0xFF666666),
+                            unselectedTextColor = Color(0xFF666666),
+                            indicatorColor = Color.Transparent
+                        )
+                    )
+                }
+            }
+        },
+        floatingActionButton = {
+            if (currentScreen == "list") {
+                FloatingActionButton(
+                    onClick = { currentScreen = "add" },
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    shape = RoundedCornerShape(16.dp)
+                ) {
+                    Icon(Icons.Default.Add, contentDescription = "Adicionar", tint = Color.White)
+                }
+            }
         }
-    ) { paddingValues ->
+    ) { innerPadding ->
         Column(
             modifier = Modifier
+                .padding(innerPadding)
                 .fillMaxSize()
-                .padding(paddingValues)
-                .background(MaterialTheme.colorScheme.background)
+                .padding(16.dp)
         ) {
-            // Tabs
-            TabRow(
-                selectedTabIndex = selectedTabIndex,
-                containerColor = Color.White,
-                contentColor = MaterialTheme.colorScheme.primary
-            ) {
-                tabs.forEachIndexed { index, title ->
-                    Tab(
-                        selected = selectedTabIndex == index,
-                        onClick = { selectedTabIndex = index },
-                        text = {
-                            Text(
-                                text = title,
-                                fontWeight = if (selectedTabIndex == index)
-                                    FontWeight.Bold else FontWeight.Normal,
-                                fontSize = 13.sp
-                            )
-                        },
-                        selectedContentColor = MaterialTheme.colorScheme.primary,
-                        unselectedContentColor = Color.Gray
-                    )
-                }
-            }
-
-            // Book List
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp),
-                contentPadding = PaddingValues(vertical = 16.dp)
-            ) {
-                items(filteredBooks) { book ->
-                    BookCard(book)
-                }
-            }
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun BookCard(book: BookItem) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(120.dp),
-        shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = Color.White
-        ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-        border = CardDefaults.outlinedCardBorder()
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(12.dp),
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            // Book Icon
-            Surface(
-                modifier = Modifier
-                    .width(60.dp)
-                    .fillMaxHeight(),
-                shape = RoundedCornerShape(8.dp),
-                color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
-            ) {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        Icons.Default.MenuBook,
-                        contentDescription = null,
-                        modifier = Modifier.size(32.dp),
-                        tint = MaterialTheme.colorScheme.primary
-                    )
-                }
-            }
-
-            // Book Info
-            Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxHeight(),
-                verticalArrangement = Arrangement.SpaceBetween
-            ) {
-                Column {
+            when (currentScreen) {
+                "list" -> {
                     Text(
-                        text = book.title,
-                        fontSize = 14.sp,
+                        text = "Gerenciar Acervo",
+                        fontSize = 22.sp,
                         fontWeight = FontWeight.Bold,
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis,
-                        color = Color.Black
+                        color = MaterialTheme.colorScheme.primary
                     )
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(
-                        text = book.author,
-                        fontSize = 12.sp,
-                        color = Color.Gray,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
+                    Spacer(modifier = Modifier.height(16.dp))
+                    OutlinedTextField(
+                        value = "",
+                        onValueChange = {},
+                        placeholder = { Text("Pesquisar por título, autor ou ISBN") },
+                        leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(12.dp)
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    // ALTERAÇÃO 1: Passando a nova função onRemove para o BookCard
+                    BookCard(
+                        title = "PathExileLORE",
+                        subtitle = "Marak - 2020",
+                        rating = "★5",
+                        onEdit = { currentScreen = "edit" },
+                        onRemove = {
+                            dialogMessage = "Tem certeza que deseja remover esta obra?"
+                            showDialog = true
+                        }
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    BookCard(
+                        title = "WOW",
+                        subtitle = "Aliens - 1977",
+                        rating = "★4.8",
+                        onEdit = { currentScreen = "edit" },
+                        onRemove = {
+                            dialogMessage = "Tem certeza que deseja remover esta obra?"
+                            showDialog = true
+                        }
                     )
                 }
 
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = if (book.status == "Aguardando" && book.positionInQueue != null) {
-                            "Posição na fila: ${book.positionInQueue}"
-                        } else {
-                            book.publicationDate
-                        },
-                        fontSize = 11.sp,
-                        color = Color.Gray
+                "add" -> {
+                    AddEditContent(
+                        title = "Adicionar Acervo",
+                        onBack = { currentScreen = "list" },
+                        onConfirm = {
+                            dialogMessage = "Tem certeza que deseja adicionar a obra ao acervo?"
+                            showDialog = true
+                        }
                     )
-
-                    when (book.status) {
-                        "Aguardando" -> {
-                            OutlinedButton(
-                                onClick = { /* TODO: Cancelar */ },
-                                modifier = Modifier.height(32.dp),
-                                shape = RoundedCornerShape(8.dp),
-                                colors = ButtonDefaults.outlinedButtonColors(
-                                    contentColor = Color(0xFFD32F2F)
-                                ),
-                                contentPadding = PaddingValues(horizontal = 12.dp, vertical = 4.dp)
-                            ) {
-                                Icon(
-                                    Icons.Default.Close,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(16.dp)
-                                )
-                                Spacer(modifier = Modifier.width(4.dp))
-                                Text("Cancelar", fontSize = 11.sp)
-                            }
-                        }
-                        "Devolvido" -> {
-                            Button(
-                                onClick = { /* TODO: Renovar */ },
-                                modifier = Modifier.height(32.dp),
-                                shape = RoundedCornerShape(8.dp),
-                                colors = ButtonDefaults.buttonColors(
-                                    containerColor = MaterialTheme.colorScheme.primary
-                                ),
-                                contentPadding = PaddingValues(horizontal = 12.dp, vertical = 4.dp)
-                            ) {
-                                Icon(
-                                    Icons.Default.Refresh,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(16.dp)
-                                )
-                                Spacer(modifier = Modifier.width(4.dp))
-                                Text("Renovar", fontSize = 11.sp)
-                            }
-                        }
-                        "Disponível" -> {
-                            Button(
-                                onClick = { /* TODO: Reservar */ },
-                                modifier = Modifier.height(32.dp),
-                                shape = RoundedCornerShape(8.dp),
-                                colors = ButtonDefaults.buttonColors(
-                                    containerColor = MaterialTheme.colorScheme.primary
-                                ),
-                                contentPadding = PaddingValues(horizontal = 12.dp, vertical = 4.dp)
-                            ) {
-                                Icon(
-                                    Icons.Default.Add,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(16.dp)
-                                )
-                                Spacer(modifier = Modifier.width(4.dp))
-                                Text("Reservar", fontSize = 11.sp)
-                            }
-                        }
-                    }
                 }
+
+                "edit" -> {
+                    AddEditContent(
+                        title = "Editar Acervo",
+                        onBack = { currentScreen = "list" },
+                        onConfirm = {
+                            dialogMessage = "Tem certeza que deseja editar a obra do acervo?"
+                            showDialog = true
+                        }
+                    )
+                }
+            }
+        }
+    }
+
+    if (showDialog) {
+        ConfirmDialog(
+            message = dialogMessage,
+            onDismiss = { showDialog = false },
+            onConfirm = {
+                showDialog = false
+                // Lógica de confirmação aqui (adicionar, editar ou remover)
+            }
+        )
+    }
+}
+
+// ALTERAÇÃO 2: Adicionamos um novo parâmetro 'onRemove' para que o Card possa "avisar" a tela.
+@Composable
+fun BookCard(title: String, subtitle: String, rating: String, onEdit: () -> Unit, onRemove: () -> Unit) {
+    Card(
+        Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+        shape = RoundedCornerShape(16.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+    ) {
+        Column(Modifier.padding(12.dp)) {
+            Text(title, fontWeight = FontWeight.Bold, fontSize = 18.sp)
+            Text(subtitle, color = Color.Gray, fontSize = 14.sp)
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(rating, color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.SemiBold)
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
+                TextButton(onClick = onEdit) { Text("Editar") }
+                // Agora o botão de remover chama a função que foi passada para ele.
+                TextButton(onClick = onRemove) { Text("Remover") }
             }
         }
     }
 }
 
-@Preview(showBackground = true)
+@Composable
+fun AddEditContent(title: String, onBack: () -> Unit, onConfirm: () -> Unit) {
+    Column(
+        Modifier
+            .fillMaxSize()
+            .padding(8.dp)
+    ) {
+        Text(
+            text = title,
+            style = MaterialTheme.typography.titleLarge.copy(
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.primary
+            )
+        )
+        Spacer(modifier = Modifier.height(12.dp))
+        OutlinedTextField(value = "", onValueChange = {}, label = { Text("Título") }, modifier = Modifier.fillMaxWidth())
+        Spacer(modifier = Modifier.height(8.dp))
+        OutlinedTextField(value = "", onValueChange = {}, label = { Text("Autor") }, modifier = Modifier.fillMaxWidth())
+        Spacer(modifier = Modifier.height(8.dp))
+        OutlinedTextField(value = "", onValueChange = {}, label = { Text("Ano") }, modifier = Modifier.fillMaxWidth())
+        Spacer(modifier = Modifier.height(12.dp))
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Checkbox(checked = false, onCheckedChange = {})
+            Spacer(modifier = Modifier.width(8.dp))
+            Text("Digital")
+            Spacer(modifier = Modifier.width(16.dp))
+            Checkbox(checked = false, onCheckedChange = {})
+            Spacer(modifier = Modifier.width(8.dp))
+            Text("Físico")
+        }
+        Spacer(modifier = Modifier.height(12.dp))
+        OutlinedTextField(value = "", onValueChange = {}, label = { Text("Descrição") }, modifier = Modifier.fillMaxWidth())
+        Spacer(modifier = Modifier.height(20.dp))
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+            OutlinedButton(onClick = onBack) {
+                Icon(Icons.Default.ArrowBack, contentDescription = null)
+                Spacer(Modifier.width(8.dp))
+                Text("Voltar")
+            }
+            Button(onClick = onConfirm, colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)) {
+                Text(if (title.contains("Editar")) "Confirmar" else "Adicionar")
+            }
+        }
+    }
+}
+
+// ALTERAÇÃO 3: Trocando o texto dos botões para ficar mais genérico e atender sua solicitação.
+@Composable
+fun ConfirmDialog(message: String, onDismiss: () -> Unit, onConfirm: () -> Unit) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(message, textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth()) },
+        confirmButton = {
+            TextButton(onClick = onConfirm) { Text("Confirmar", color = MaterialTheme.colorScheme.primary) }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) { Text("Cancelar") }
+        },
+        shape = RoundedCornerShape(20.dp)
+    )
+}
+
+// Navigation helpers (usadas pelo bottom nav)
+private fun navigateToHome(context: Context) {
+    val intent = Intent(context, HomeActivity::class.java)
+    context.startActivity(intent)
+}
+
+private fun navigateToReservations(context: Context) {
+    val intent = Intent(context, MyReservationsActivity::class.java)
+    context.startActivity(intent)
+}
+
+private fun navigateToProfile(context: Context) {
+    val intent = Intent(context, EditProfileActivity::class.java)
+    context.startActivity(intent)
+}
+
+data class BottomNavItem(
+    val label: String,
+    val icon: ImageVector,
+    val index: Int
+)
+
+@Preview(showBackground = true, widthDp = 360, heightDp = 800)
 @Composable
 fun AcervoScreenPreview() {
     UniforLibraryTheme {
