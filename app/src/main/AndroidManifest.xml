@@ -52,6 +52,24 @@
             android:label="Acervo"
             android:theme="@style/Theme.UniforLibrary" />
 
+        <activity
+            android:name=".home.HomeActivity"
+            android:exported="false"
+            android:label="@string/title_activity_home"
+            android:theme="@style/Theme.UniforLibrary" />
+
+        <activity
+            android:name=".produzir.ProduzirActivity"
+            android:exported="false"
+            android:label="Submeter Produção"
+            android:theme="@style/Theme.UniforLibrary" />
+
+        <activity
+            android:name=".acervo.BookDetailActivity"
+            android:exported="false"
+            android:label="Detalhes da Obra"
+            android:theme="@style/Theme.UniforLibrary" />
+
     </application>
 
 </manifest>
