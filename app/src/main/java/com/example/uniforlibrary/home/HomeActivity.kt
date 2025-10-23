@@ -34,7 +34,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.uniforlibrary.R
 import com.example.uniforlibrary.acervo.AcervoActivity
+import com.example.uniforlibrary.produzir.ProduzirActivity
 import com.example.uniforlibrary.profile.EditProfileActivity
+import com.example.uniforlibrary.reservation.MyReservationsActivity
 import com.example.uniforlibrary.ui.theme.UniforLibraryTheme
 
 class HomeActivity : ComponentActivity() {
@@ -128,8 +130,9 @@ fun HomeScreen() {
                                 selectedItemIndex = item.index
                                 when (item.index) {
                                     0 -> { /* Já está na Home */ }
-                                    1 -> { /* TODO: Acervo */ }
+                                    1 -> navigateToAcervo(context)
                                     3 -> navigateToReservations(context)
+                                    4 -> navigateToProduzir(context)
                                     else -> { /* TODO: Outras navegações */ }
                                 }
                             },
@@ -189,7 +192,9 @@ fun HomeScreen() {
             Spacer(modifier = Modifier.height(12.dp))
 
             QuickAccessGrid(
-                onReservationsClick = { navigateToReservations(context) }
+                onAcervoClick = { navigateToAcervo(context) },
+                onReservationsClick = { navigateToReservations(context) },
+                onProduzirClick = { navigateToProduzir(context) }
             )
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -273,12 +278,12 @@ fun SearchBarSection() {
 }
 
 @Composable
-fun QuickAccessGrid(onReservationsClick: () -> Unit) {
+fun QuickAccessGrid(onAcervoClick: () -> Unit, onReservationsClick: () -> Unit, onProduzirClick: () -> Unit) {
     val quickAccessItems = listOf(
-        QuickAccessItem("Consultar acervo", Icons.AutoMirrored.Filled.MenuBook) { /* TODO */ },
+        QuickAccessItem("Consultar acervo", Icons.AutoMirrored.Filled.MenuBook, onAcervoClick),
         QuickAccessItem("Meus Empréstimos", Icons.Default.Book) { /* TODO */ },
         QuickAccessItem("Reservas", Icons.Default.Bookmark, onReservationsClick),
-        QuickAccessItem("Submeter\nProdução", Icons.Default.FileUpload) { /* TODO */ },
+        QuickAccessItem("Submeter\nProdução", Icons.Default.FileUpload, onProduzirClick),
         QuickAccessItem("Exposições\ndos alunos", Icons.Default.PhotoLibrary) { /* TODO */ }
     )
 
@@ -415,9 +420,21 @@ fun HighlightChip(text: String) {
     )
 }
 
+// Função para navegar para a tela de Acervo
+private fun navigateToAcervo(context: Context) {
+    val intent = Intent(context, AcervoActivity::class.java)
+    context.startActivity(intent)
+}
+
 // Função para navegar para a tela de Reservas
 private fun navigateToReservations(context: Context) {
-    val intent = Intent(context, AcervoActivity::class.java)
+    val intent = Intent(context, MyReservationsActivity::class.java)
+    context.startActivity(intent)
+}
+
+// Função para navegar para a tela de Produzir
+private fun navigateToProduzir(context: Context) {
+    val intent = Intent(context, ProduzirActivity::class.java)
     context.startActivity(intent)
 }
 
