@@ -100,6 +100,42 @@
             android:label="Detalhes do Empréstimo"
             android:theme="@style/Theme.UniforLibrary" />
 
+        <activity
+            android:name=".homeAdm.HomeAdm_Activity"
+            android:exported="false"
+            android:label="Home Administrador"
+            android:theme="@style/Theme.UniforLibrary" />
+
+        <activity
+            android:name=".acervoAdm.AcervoAdm_Activity"
+            android:exported="false"
+            android:label="Gerenciar Acervo"
+            android:theme="@style/Theme.UniforLibrary" />
+
+        <activity
+            android:name=".exposicoesAdm.ExposicoesAdm_Activity"
+            android:exported="false"
+            android:label="Gerenciar Exposições"
+            android:theme="@style/Theme.UniforLibrary" />
+
+        <activity
+            android:name=".reservasAdm.ReservasAdm_Activity"
+            android:exported="false"
+            android:label="Gerenciar Reservas"
+            android:theme="@style/Theme.UniforLibrary" />
+
+        <activity
+            android:name=".relatoriosAdm.RelatoriosAdm_Activity"
+            android:exported="false"
+            android:label="Relatórios"
+            android:theme="@style/Theme.UniforLibrary" />
+
+        <activity
+            android:name=".exposicoesAdm.ExposicaoDetailAdm_Activity"
+            android:exported="false"
+            android:label="Detalhes da Exposição"
+            android:theme="@style/Theme.UniforLibrary" />
+
     </application>
 
 </manifest>
