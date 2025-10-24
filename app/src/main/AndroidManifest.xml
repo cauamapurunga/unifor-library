@@ -52,6 +52,17 @@
             android:label="Acervo"
             android:theme="@style/Theme.UniforLibrary" />
 
+        <activity android:name=".home.HomeActivity"
+            android:exported="false"
+            android:label="Home"
+            android:theme="@style/Theme.UniforLibrary"/>
+
+        <activity android:name=".notification.NotificationActivity"
+            android:exported="false"
+            android:label="Notificações"
+            android:theme="@style/Theme.UniforLibrary"/>
+
+
     </application>
 
 </manifest>

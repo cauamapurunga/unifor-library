@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.uniforlibrary.R
 import com.example.uniforlibrary.acervo.AcervoActivity
+import com.example.uniforlibrary.notification.NotificationActivity
 import com.example.uniforlibrary.profile.EditProfileActivity
 import com.example.uniforlibrary.ui.theme.UniforLibraryTheme
 
@@ -87,7 +88,7 @@ fun HomeScreen() {
                     }
                 },
                 actions = {
-                    IconButton(onClick = { /* TODO: Notificações */ }) {
+                    IconButton(onClick = { navigateToNotifications(context) }) {
                         Icon(
                             Icons.Default.Notifications,
                             contentDescription = "Notificações",
@@ -128,7 +129,7 @@ fun HomeScreen() {
                                 selectedItemIndex = item.index
                                 when (item.index) {
                                     0 -> { /* Já está na Home */ }
-                                    1 -> { /* TODO: Acervo */ }
+                                    1 -> navigateToAcervo(context)
                                     3 -> navigateToReservations(context)
                                     else -> { /* TODO: Outras navegações */ }
                                 }
@@ -416,17 +417,26 @@ fun HighlightChip(text: String) {
 }
 
 // Função para navegar para a tela de Reservas
-private fun navigateToReservations(context: Context) {
+ fun navigateToReservations(context: Context) {
     val intent = Intent(context, AcervoActivity::class.java)
     context.startActivity(intent)
 }
 
 // Função para navegar para a tela de Perfil
-private fun navigateToProfile(context: Context) {
+ fun navigateToProfile(context: Context) {
     val intent = Intent(context, EditProfileActivity::class.java)
     context.startActivity(intent)
 }
 
+ fun navigateToNotifications(context: Context){
+    val intent = Intent(context, NotificationActivity::class.java)
+    context.startActivity(intent)
+}
+
+fun navigateToAcervo(context: Context){
+    val intent = Intent(context, AcervoActivity::class.java)
+    context.startActivity(intent)
+}
 // --- Modelos de Dados ---
 
 data class BottomNavItem(

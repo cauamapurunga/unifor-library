@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.uniforlibrary.R
 import com.example.uniforlibrary.home.HomeActivity
+import com.example.uniforlibrary.home.navigateToNotifications
 import com.example.uniforlibrary.profile.EditProfileActivity
 import com.example.uniforlibrary.reservation.MyReservationsActivity
 import com.example.uniforlibrary.ui.theme.UniforLibraryTheme
@@ -81,7 +82,7 @@ fun AcervoScreen() {
                     }
                 },
                 actions = {
-                    IconButton(onClick = { /* TODO: Notificações */ }) {
+                    IconButton(onClick = { navigateToNotifications(context) }) {
                         Icon(
                             Icons.Default.Notifications,
                             contentDescription = "Notificações",
