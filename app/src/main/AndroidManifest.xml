@@ -70,6 +70,36 @@
             android:label="Detalhes da Obra"
             android:theme="@style/Theme.UniforLibrary" />
 
+        <activity
+            android:name=".exposicoes.ExposicoesActivity"
+            android:exported="false"
+            android:label="Exposições"
+            android:theme="@style/Theme.UniforLibrary" />
+
+        <activity
+            android:name=".exposicoes.ExhibitionDetailActivity"
+            android:exported="false"
+            android:label="Detalhes da Exposição"
+            android:theme="@style/Theme.UniforLibrary" />
+
+        <activity
+            android:name=".exposicoes.ReadingActivity"
+            android:exported="false"
+            android:label="Leitura"
+            android:theme="@style/Theme.UniforLibrary" />
+
+        <activity
+            android:name=".emprestimos.EmprestimosActivity"
+            android:exported="false"
+            android:label="Meus Empréstimos"
+            android:theme="@style/Theme.UniforLibrary" />
+
+        <activity
+            android:name=".emprestimos.EmprestimoDetailActivity"
+            android:exported="false"
+            android:label="Detalhes do Empréstimo"
+            android:theme="@style/Theme.UniforLibrary" />
+
     </application>
 
 </manifest>

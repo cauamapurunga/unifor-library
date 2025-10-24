@@ -29,8 +29,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.uniforlibrary.R
 import com.example.uniforlibrary.acervo.AcervoActivity
+import com.example.uniforlibrary.emprestimos.EmprestimosActivity
+import com.example.uniforlibrary.exposicoes.ExposicoesActivity
 import com.example.uniforlibrary.home.HomeActivity
 import com.example.uniforlibrary.profile.EditProfileActivity
+import com.example.uniforlibrary.reservation.MyReservationsActivity
 import com.example.uniforlibrary.ui.theme.UniforLibraryTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -107,12 +110,10 @@ fun ProduzirScreen(onBack: () -> Unit) {
                             when (item.index) {
                                 0 -> navigateToHome(context)
                                 1 -> navigateToAcervo(context)
+                                2 -> navigateToEmprestimos(context)
                                 3 -> navigateToReservations(context)
-                                4 -> {
-                                    // Já está na tela Produzir
-                                    Toast.makeText(context, "Você já está em Produzir", Toast.LENGTH_SHORT).show()
-                                }
-                                else -> { /* TODO: outras navegações */ }
+                                4 -> { /* Já está na tela Produzir */ }
+                                5 -> navigateToExposicoes(context)
                             }
                         },
                         label = {
@@ -328,9 +329,16 @@ private fun navigateToAcervo(context: Context) {
     context.startActivity(Intent(context, AcervoActivity::class.java))
 }
 
+private fun navigateToEmprestimos(context: Context) {
+    context.startActivity(Intent(context, EmprestimosActivity::class.java))
+}
+
 private fun navigateToReservations(context: Context) {
-    // Temporariamente desativado para evitar erros
-    // context.startActivity(Intent(context, MyReservationsActivity::class.java))
+    context.startActivity(Intent(context, MyReservationsActivity::class.java))
+}
+
+private fun navigateToExposicoes(context: Context) {
+    context.startActivity(Intent(context, ExposicoesActivity::class.java))
 }
 
 private fun navigateToProfile(context: Context) {

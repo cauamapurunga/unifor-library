@@ -25,6 +25,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.uniforlibrary.R
+import com.example.uniforlibrary.emprestimos.EmprestimosActivity
+import com.example.uniforlibrary.exposicoes.ExposicoesActivity
 import com.example.uniforlibrary.home.HomeActivity
 import com.example.uniforlibrary.produzir.ProduzirActivity
 import com.example.uniforlibrary.profile.EditProfileActivity
@@ -123,10 +125,10 @@ fun AcervoScreen() {
                                 when (item.index) {
                                     0 -> navigateToHome(context)
                                     1 -> { /* já está em Acervo */ }
-                                    2 -> { /* TODO: Emprestimos */ }
+                                    2 -> navigateToEmprestimos(context)
                                     3 -> navigateToReservations(context)
                                     4 -> navigateToProduzir(context)
-                                    5 -> { /* TODO: Exposições */ }
+                                    5 -> navigateToExposicoes(context)
                                 }
                             },
                             label = {
@@ -331,8 +333,18 @@ private fun navigateToAcervo(context: Context) {
     context.startActivity(intent)
 }
 
+private fun navigateToExposicoes(context: Context) {
+    val intent = Intent(context, ExposicoesActivity::class.java)
+    context.startActivity(intent)
+}
+
 private fun navigateToBookDetail(context: Context) {
     val intent = Intent(context, BookDetailActivity::class.java)
+    context.startActivity(intent)
+}
+
+private fun navigateToEmprestimos(context: Context) {
+    val intent = Intent(context, EmprestimosActivity::class.java)
     context.startActivity(intent)
 }
 

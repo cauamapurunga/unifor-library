@@ -34,6 +34,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.uniforlibrary.R
 import com.example.uniforlibrary.acervo.AcervoActivity
+import com.example.uniforlibrary.emprestimos.EmprestimosActivity
+import com.example.uniforlibrary.exposicoes.ExposicoesActivity
 import com.example.uniforlibrary.produzir.ProduzirActivity
 import com.example.uniforlibrary.profile.EditProfileActivity
 import com.example.uniforlibrary.reservation.MyReservationsActivity
@@ -80,10 +82,9 @@ fun HomeScreen() {
                         )
                         Spacer(modifier = Modifier.width(12.dp))
                         Text(
-                            text = "Biblioteca\nCentral",
+                            text = "Biblioteca Central",
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Bold,
-                            lineHeight = 18.sp,
                             color = Color.White
                         )
                     }
@@ -131,9 +132,10 @@ fun HomeScreen() {
                                 when (item.index) {
                                     0 -> { /* Já está na Home */ }
                                     1 -> navigateToAcervo(context)
+                                    2 -> navigateToEmprestimos(context)
                                     3 -> navigateToReservations(context)
                                     4 -> navigateToProduzir(context)
-                                    else -> { /* TODO: Outras navegações */ }
+                                    5 -> navigateToExposicoes(context)
                                 }
                             },
                             label = {
@@ -193,8 +195,10 @@ fun HomeScreen() {
 
             QuickAccessGrid(
                 onAcervoClick = { navigateToAcervo(context) },
+                onEmprestimosClick = { navigateToEmprestimos(context) },
                 onReservationsClick = { navigateToReservations(context) },
-                onProduzirClick = { navigateToProduzir(context) }
+                onProduzirClick = { navigateToProduzir(context) },
+                onExposicoesClick = { navigateToExposicoes(context) }
             )
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -278,13 +282,19 @@ fun SearchBarSection() {
 }
 
 @Composable
-fun QuickAccessGrid(onAcervoClick: () -> Unit, onReservationsClick: () -> Unit, onProduzirClick: () -> Unit) {
+fun QuickAccessGrid(
+    onAcervoClick: () -> Unit,
+    onEmprestimosClick: () -> Unit,
+    onReservationsClick: () -> Unit,
+    onProduzirClick: () -> Unit,
+    onExposicoesClick: () -> Unit
+) {
     val quickAccessItems = listOf(
         QuickAccessItem("Consultar acervo", Icons.AutoMirrored.Filled.MenuBook, onAcervoClick),
-        QuickAccessItem("Meus Empréstimos", Icons.Default.Book) { /* TODO */ },
+        QuickAccessItem("Meus Empréstimos", Icons.Default.Book, onEmprestimosClick),
         QuickAccessItem("Reservas", Icons.Default.Bookmark, onReservationsClick),
         QuickAccessItem("Submeter\nProdução", Icons.Default.FileUpload, onProduzirClick),
-        QuickAccessItem("Exposições\ndos alunos", Icons.Default.PhotoLibrary) { /* TODO */ }
+        QuickAccessItem("Exposições\ndos alunos", Icons.Default.PhotoLibrary, onExposicoesClick)
     )
 
     LazyVerticalGrid(
@@ -420,28 +430,30 @@ fun HighlightChip(text: String) {
     )
 }
 
-// Função para navegar para a tela de Acervo
+// --- Funções de Navegação ---
+
 private fun navigateToAcervo(context: Context) {
-    val intent = Intent(context, AcervoActivity::class.java)
-    context.startActivity(intent)
+    context.startActivity(Intent(context, AcervoActivity::class.java))
 }
 
-// Função para navegar para a tela de Reservas
+private fun navigateToEmprestimos(context: Context) {
+    context.startActivity(Intent(context, EmprestimosActivity::class.java))
+}
+
 private fun navigateToReservations(context: Context) {
-    val intent = Intent(context, MyReservationsActivity::class.java)
-    context.startActivity(intent)
+    context.startActivity(Intent(context, MyReservationsActivity::class.java))
 }
 
-// Função para navegar para a tela de Produzir
 private fun navigateToProduzir(context: Context) {
-    val intent = Intent(context, ProduzirActivity::class.java)
-    context.startActivity(intent)
+    context.startActivity(Intent(context, ProduzirActivity::class.java))
 }
 
-// Função para navegar para a tela de Perfil
+private fun navigateToExposicoes(context: Context) {
+    context.startActivity(Intent(context, ExposicoesActivity::class.java))
+}
+
 private fun navigateToProfile(context: Context) {
-    val intent = Intent(context, EditProfileActivity::class.java)
-    context.startActivity(intent)
+    context.startActivity(Intent(context, EditProfileActivity::class.java))
 }
 
 // --- Modelos de Dados ---
