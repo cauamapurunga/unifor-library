@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.uniforlibrary.R
 import com.example.uniforlibrary.acervo.AcervoActivity
+import com.example.uniforlibrary.components.UserBottomNav
 import com.example.uniforlibrary.emprestimos.EmprestimosActivity
 import com.example.uniforlibrary.exposicoes.ExposicoesActivity
 import com.example.uniforlibrary.produzir.ProduzirActivity
@@ -56,16 +57,6 @@ class HomeActivity : ComponentActivity() {
 @Composable
 fun HomeScreen() {
     val context = LocalContext.current
-    var selectedItemIndex by remember { mutableIntStateOf(0) }
-
-    val navigationItems = listOf(
-        BottomNavItem("Home", Icons.Default.Home, 0),
-        BottomNavItem("Acervo", Icons.AutoMirrored.Filled.MenuBook, 1),
-        BottomNavItem("Empréstimos", Icons.Default.Book, 2),
-        BottomNavItem("Reservas", Icons.Default.Bookmark, 3),
-        BottomNavItem("Produzir", Icons.Default.Add, 4),
-        BottomNavItem("Exposições", Icons.Default.PhotoLibrary, 5)
-    )
 
     Scaffold(
         topBar = {
@@ -112,61 +103,7 @@ fun HomeScreen() {
             )
         },
         bottomBar = {
-            Surface(
-                tonalElevation = 0.dp,
-                shadowElevation = 16.dp,
-                color = Color.White
-            ) {
-                NavigationBar(
-                    containerColor = Color.White,
-                    tonalElevation = 0.dp,
-                    modifier = Modifier
-                        .height(80.dp)
-                        .padding(vertical = 8.dp, horizontal = 4.dp)
-                ) {
-                    navigationItems.forEach { item ->
-                        NavigationBarItem(
-                            selected = selectedItemIndex == item.index,
-                            onClick = {
-                                selectedItemIndex = item.index
-                                when (item.index) {
-                                    0 -> { /* Já está na Home */ }
-                                    1 -> navigateToAcervo(context)
-                                    2 -> navigateToEmprestimos(context)
-                                    3 -> navigateToReservations(context)
-                                    4 -> navigateToProduzir(context)
-                                    5 -> navigateToExposicoes(context)
-                                }
-                            },
-                            label = {
-                                Text(
-                                    item.label,
-                                    fontSize = 9.sp,
-                                    maxLines = 2,
-                                    textAlign = TextAlign.Center,
-                                    lineHeight = 11.sp,
-                                    fontWeight = if (selectedItemIndex == item.index)
-                                        FontWeight.Bold else FontWeight.Medium
-                                )
-                            },
-                            icon = {
-                                Icon(
-                                    imageVector = item.icon,
-                                    contentDescription = item.label,
-                                    modifier = Modifier.size(24.dp)
-                                )
-                            },
-                            colors = NavigationBarItemDefaults.colors(
-                                selectedIconColor = MaterialTheme.colorScheme.primary,
-                                selectedTextColor = MaterialTheme.colorScheme.primary,
-                                unselectedIconColor = Color(0xFF666666),
-                                unselectedTextColor = Color(0xFF666666),
-                                indicatorColor = Color.Transparent
-                            )
-                        )
-                    }
-                }
-            }
+            UserBottomNav(context = context, selectedItemIndex = 0)
         }
     ) { innerPadding ->
         Column(
@@ -194,11 +131,11 @@ fun HomeScreen() {
             Spacer(modifier = Modifier.height(12.dp))
 
             QuickAccessGrid(
-                onAcervoClick = { navigateToAcervo(context) },
-                onEmprestimosClick = { navigateToEmprestimos(context) },
-                onReservationsClick = { navigateToReservations(context) },
-                onProduzirClick = { navigateToProduzir(context) },
-                onExposicoesClick = { navigateToExposicoes(context) }
+                onAcervoClick = { context.startActivity(Intent(context, AcervoActivity::class.java)) },
+                onEmprestimosClick = { context.startActivity(Intent(context, EmprestimosActivity::class.java)) },
+                onReservationsClick = { context.startActivity(Intent(context, MyReservationsActivity::class.java)) },
+                onProduzirClick = { context.startActivity(Intent(context, ProduzirActivity::class.java)) },
+                onExposicoesClick = { context.startActivity(Intent(context, ExposicoesActivity::class.java)) }
             )
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -430,39 +367,13 @@ fun HighlightChip(text: String) {
     )
 }
 
-// --- Funções de Navegação ---
 
-private fun navigateToAcervo(context: Context) {
-    context.startActivity(Intent(context, AcervoActivity::class.java))
-}
-
-private fun navigateToEmprestimos(context: Context) {
-    context.startActivity(Intent(context, EmprestimosActivity::class.java))
-}
-
-private fun navigateToReservations(context: Context) {
-    context.startActivity(Intent(context, MyReservationsActivity::class.java))
-}
-
-private fun navigateToProduzir(context: Context) {
-    context.startActivity(Intent(context, ProduzirActivity::class.java))
-}
-
-private fun navigateToExposicoes(context: Context) {
-    context.startActivity(Intent(context, ExposicoesActivity::class.java))
-}
-
+// Função para navegar para a tela de Perfil
 private fun navigateToProfile(context: Context) {
     context.startActivity(Intent(context, EditProfileActivity::class.java))
 }
 
 // --- Modelos de Dados ---
-
-data class BottomNavItem(
-    val label: String,
-    val icon: ImageVector,
-    val index: Int
-)
 
 data class QuickAccessItem(
     val label: String,

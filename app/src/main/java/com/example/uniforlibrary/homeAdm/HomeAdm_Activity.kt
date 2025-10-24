@@ -1,0 +1,243 @@
+package com.example.uniforlibrary.homeAdm
+
+import android.content.Context
+import android.content.Intent
+import android.os.Bundle
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.MenuBook
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.example.uniforlibrary.R
+import com.example.uniforlibrary.acervoAdm.AcervoAdm_Activity
+import com.example.uniforlibrary.exposicoesAdm.ExposicoesAdm_Activity
+import com.example.uniforlibrary.profile.EditProfileActivity
+import com.example.uniforlibrary.relatoriosAdm.RelatoriosAdm_Activity
+import com.example.uniforlibrary.reservasAdm.ReservasAdm_Activity
+import com.example.uniforlibrary.ui.theme.UniforLibraryTheme
+
+class HomeAdm_Activity : ComponentActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContent {
+            UniforLibraryTheme {
+                HomeAdmScreen()
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun HomeAdmScreen() {
+    val context = LocalContext.current
+
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
+                        Image(painter = painterResource(id = R.drawable.logo_branca), contentDescription = "Logo Unifor", modifier = Modifier.size(50.dp))
+                        Spacer(modifier = Modifier.width(12.dp))
+                        Text("Biblioteca Central", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                    }
+                },
+                actions = {
+                    IconButton(onClick = { /* TODO: Notificações */ }) {
+                        Icon(Icons.Default.Notifications, contentDescription = "Notificações", tint = Color.White)
+                    }
+                    IconButton(onClick = { navigateToProfile(context) }) {
+                        Icon(Icons.Default.Person, contentDescription = "Perfil", tint = Color.White)
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.primary)
+            )
+        },
+        bottomBar = {
+            AdminBottomNav(context = context, selectedItemIndex = 0)
+        }
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .padding(innerPadding)
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(16.dp)
+        ) {
+            SearchBarAdmin()
+            Spacer(modifier = Modifier.height(24.dp))
+            QuickAccessAdmin(context)
+            Spacer(modifier = Modifier.height(24.dp))
+            MetricsSection()
+        }
+    }
+}
+
+@Composable
+fun SearchBarAdmin() {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(12.dp),
+        elevation = CardDefaults.cardElevation(4.dp)
+    ) {
+        Row(
+            modifier = Modifier.padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column(modifier = Modifier.weight(1f)) {
+                Text("Biblioteca Universitária", fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                Text("Pesquise títulos, gerencie empréstimos e acompanhe os relatórios.", fontSize = 12.sp, lineHeight = 14.sp)
+            }
+            Spacer(modifier = Modifier.width(8.dp))
+            OutlinedButton(onClick = { /* TODO */ }) {
+                Icon(Icons.Default.Search, contentDescription = "Pesquisar", modifier = Modifier.size(18.dp))
+                Spacer(modifier = Modifier.width(4.dp))
+                Text("Pesquisar", fontSize = 12.sp)
+            }
+        }
+    }
+}
+
+@Composable
+fun QuickAccessAdmin(context: Context) {
+    Column {
+        Text("Acesso rápido", fontSize = 20.sp, fontWeight = FontWeight.Bold)
+        Spacer(modifier = Modifier.height(12.dp))
+        Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+            QuickAccessButton(text = "Gerenciar acervo", modifier = Modifier.weight(1f), onClick = { navigateToAcervoAdm(context) })
+            QuickAccessButton(text = "Gerenciar Produções", modifier = Modifier.weight(1f), onClick = { navigateToExposicoesAdm(context) })
+        }
+        Spacer(modifier = Modifier.height(16.dp))
+        Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+            QuickAccessButton(text = "Reservas", modifier = Modifier.weight(1f), onClick = { navigateToReservasAdm(context) })
+            QuickAccessButton(text = "Relatórios", modifier = Modifier.weight(1f), onClick = { navigateToRelatoriosAdm(context) })
+        }
+    }
+}
+
+@Composable
+fun QuickAccessButton(text: String, modifier: Modifier = Modifier, onClick: () -> Unit) {
+    OutlinedButton(
+        onClick = onClick,
+        modifier = modifier.height(60.dp),
+        shape = RoundedCornerShape(12.dp)
+    ) {
+        Text(text, textAlign = TextAlign.Center)
+    }
+}
+
+@Composable
+fun MetricsSection() {
+    Column {
+        Text("Visão rápida de métricas", fontSize = 20.sp, fontWeight = FontWeight.Bold)
+        Spacer(modifier = Modifier.height(16.dp))
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
+            MetricCircle(value = "342", label = "Empréstimos (30 dias)")
+            MetricCircle(value = "89", label = "Reservas ativas")
+        }
+    }
+}
+
+@Composable
+fun MetricCircle(value: String, label: String) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Surface(
+            shape = CircleShape,
+            modifier = Modifier.size(100.dp),
+            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
+            border = BorderStroke(2.dp, MaterialTheme.colorScheme.primary)
+        ) {
+            Box(contentAlignment = Alignment.Center) {
+                Text(text = value, fontSize = 28.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
+            }
+        }
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(label, fontSize = 12.sp, color = Color.Gray, textAlign = TextAlign.Center)
+    }
+}
+
+@Composable
+fun AdminBottomNav(context: Context, selectedItemIndex: Int) {
+    val navigationItems = listOf(
+        AdminBottomNavItem("Home", Icons.Default.Home, 0) { context.startActivity(Intent(context, HomeAdm_Activity::class.java)) },
+        AdminBottomNavItem("Acervo", Icons.AutoMirrored.Filled.MenuBook, 1) { navigateToAcervoAdm(context) },
+        AdminBottomNavItem("Exposições", Icons.Default.PhotoLibrary, 2) { navigateToExposicoesAdm(context) },
+        AdminBottomNavItem("Reservas", Icons.Default.Bookmark, 3) { navigateToReservasAdm(context) },
+        AdminBottomNavItem("Relatórios", Icons.Default.Assessment, 4) { navigateToRelatoriosAdm(context) }
+    )
+
+    Surface(tonalElevation = 0.dp, shadowElevation = 16.dp, color = Color.White) {
+        NavigationBar(
+            containerColor = Color.White,
+            tonalElevation = 0.dp,
+            modifier = Modifier.height(80.dp).padding(vertical = 8.dp, horizontal = 4.dp)
+        ) {
+            navigationItems.forEach { item ->
+                NavigationBarItem(
+                    selected = selectedItemIndex == item.index,
+                    onClick = item.onClick,
+                    label = { Text(item.label, fontSize = 9.sp, maxLines = 2, textAlign = TextAlign.Center, lineHeight = 11.sp, fontWeight = if (selectedItemIndex == item.index) FontWeight.Bold else FontWeight.Medium) },
+                    icon = { Icon(imageVector = item.icon, contentDescription = item.label, modifier = Modifier.size(24.dp)) },
+                    colors = NavigationBarItemDefaults.colors(
+                        selectedIconColor = MaterialTheme.colorScheme.primary,
+                        selectedTextColor = MaterialTheme.colorScheme.primary,
+                        unselectedIconColor = Color(0xFF666666),
+                        unselectedTextColor = Color(0xFF666666),
+                        indicatorColor = Color.Transparent
+                    )
+                )
+            }
+        }
+    }
+}
+
+// --- Modelos e Navegação ---
+data class AdminBottomNavItem(val label: String, val icon: ImageVector, val index: Int, val onClick: () -> Unit)
+
+private fun navigateToAcervoAdm(context: Context) {
+    context.startActivity(Intent(context, AcervoAdm_Activity::class.java))
+}
+
+private fun navigateToExposicoesAdm(context: Context) {
+    context.startActivity(Intent(context, ExposicoesAdm_Activity::class.java))
+}
+
+private fun navigateToReservasAdm(context: Context) {
+    context.startActivity(Intent(context, ReservasAdm_Activity::class.java))
+}
+
+private fun navigateToRelatoriosAdm(context: Context) {
+    context.startActivity(Intent(context, RelatoriosAdm_Activity::class.java))
+}
+
+private fun navigateToProfile(context: Context) {
+    context.startActivity(Intent(context, EditProfileActivity::class.java))
+}
+
+@Preview(showBackground = true)
+@Composable
+fun HomeAdmScreenPreview() {
+    UniforLibraryTheme {
+        HomeAdmScreen()
+    }
+}
