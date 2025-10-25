@@ -28,6 +28,7 @@ import com.example.uniforlibrary.R
 import com.example.uniforlibrary.emprestimos.EmprestimosActivity
 import com.example.uniforlibrary.exposicoes.ExposicoesActivity
 import com.example.uniforlibrary.home.HomeActivity
+import com.example.uniforlibrary.home.navigateToNotifications
 import com.example.uniforlibrary.produzir.ProduzirActivity
 import com.example.uniforlibrary.profile.EditProfileActivity
 import com.example.uniforlibrary.reservation.MyReservationsActivity
@@ -83,7 +84,7 @@ fun AcervoScreen() {
                     }
                 },
                 actions = {
-                    IconButton(onClick = { /* TODO: Notificações */ }) {
+                    IconButton(onClick = { navigateToNotifications(context) }) {
                         Icon(
                             Icons.Default.Notifications,
                             contentDescription = "Notificações",

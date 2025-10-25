@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.uniforlibrary.R
 import com.example.uniforlibrary.acervo.AcervoActivity
+import com.example.uniforlibrary.notification.NotificationActivity
 import com.example.uniforlibrary.components.UserBottomNav
 import com.example.uniforlibrary.emprestimos.EmprestimosActivity
 import com.example.uniforlibrary.exposicoes.ExposicoesActivity
@@ -81,7 +82,7 @@ fun HomeScreen() {
                     }
                 },
                 actions = {
-                    IconButton(onClick = { /* TODO: Notificações */ }) {
+                    IconButton(onClick = { navigateToNotifications(context) }) {
                         Icon(
                             Icons.Default.Notifications,
                             contentDescription = "Notificações",
@@ -103,6 +104,59 @@ fun HomeScreen() {
             )
         },
         bottomBar = {
+            Surface(
+                tonalElevation = 0.dp,
+                shadowElevation = 16.dp,
+                color = Color.White
+            ) {
+                NavigationBar(
+                    containerColor = Color.White,
+                    tonalElevation = 0.dp,
+                    modifier = Modifier
+                        .height(80.dp)
+                        .padding(vertical = 8.dp, horizontal = 4.dp)
+                ) {
+                    navigationItems.forEach { item ->
+                        NavigationBarItem(
+                            selected = selectedItemIndex == item.index,
+                            onClick = {
+                                selectedItemIndex = item.index
+                                when (item.index) {
+                                    0 -> { /* Já está na Home */ }
+                                    1 -> navigateToAcervo(context)
+                                    3 -> navigateToReservations(context)
+                                    else -> { /* TODO: Outras navegações */ }
+                                }
+                            },
+                            label = {
+                                Text(
+                                    item.label,
+                                    fontSize = 9.sp,
+                                    maxLines = 2,
+                                    textAlign = TextAlign.Center,
+                                    lineHeight = 11.sp,
+                                    fontWeight = if (selectedItemIndex == item.index)
+                                        FontWeight.Bold else FontWeight.Medium
+                                )
+                            },
+                            icon = {
+                                Icon(
+                                    imageVector = item.icon,
+                                    contentDescription = item.label,
+                                    modifier = Modifier.size(24.dp)
+                                )
+                            },
+                            colors = NavigationBarItemDefaults.colors(
+                                selectedIconColor = MaterialTheme.colorScheme.primary,
+                                selectedTextColor = MaterialTheme.colorScheme.primary,
+                                unselectedIconColor = Color(0xFF666666),
+                                unselectedTextColor = Color(0xFF666666),
+                                indicatorColor = Color.Transparent
+                            )
+                        )
+                    }
+                }
+            }
             UserBottomNav(context = context, selectedItemIndex = 0)
         }
     ) { innerPadding ->
@@ -367,12 +421,31 @@ fun HighlightChip(text: String) {
     )
 }
 
+// Função para navegar para a tela de Reservas
+ fun navigateToReservations(context: Context) {
+    val intent = Intent(context, AcervoActivity::class.java)
+    context.startActivity(intent)
+}
+
+// Função para navegar para a tela de Perfil
+ fun navigateToProfile(context: Context) {
+    val intent = Intent(context, EditProfileActivity::class.java)
+    context.startActivity(intent)
 
 // Função para navegar para a tela de Perfil
 private fun navigateToProfile(context: Context) {
     context.startActivity(Intent(context, EditProfileActivity::class.java))
 }
 
+ fun navigateToNotifications(context: Context){
+    val intent = Intent(context, NotificationActivity::class.java)
+    context.startActivity(intent)
+}
+
+fun navigateToAcervo(context: Context){
+    val intent = Intent(context, AcervoActivity::class.java)
+    context.startActivity(intent)
+}
 // --- Modelos de Dados ---
 
 data class QuickAccessItem(
