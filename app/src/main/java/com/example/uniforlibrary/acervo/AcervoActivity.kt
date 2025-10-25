@@ -25,8 +25,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.uniforlibrary.R
+import com.example.uniforlibrary.emprestimos.EmprestimosActivity
+import com.example.uniforlibrary.exposicoes.ExposicoesActivity
 import com.example.uniforlibrary.home.HomeActivity
 import com.example.uniforlibrary.home.navigateToNotifications
+import com.example.uniforlibrary.produzir.ProduzirActivity
 import com.example.uniforlibrary.profile.EditProfileActivity
 import com.example.uniforlibrary.reservation.MyReservationsActivity
 import com.example.uniforlibrary.ui.theme.UniforLibraryTheme
@@ -52,11 +55,10 @@ fun AcervoScreen() {
         BottomNavItem("Acervo", Icons.AutoMirrored.Filled.MenuBook, 1),
         BottomNavItem("Empréstimos", Icons.Default.Book, 2),
         BottomNavItem("Reservas", Icons.Default.Bookmark, 3),
-        BottomNavItem("Relatórios", Icons.Default.Assessment, 4)
+        BottomNavItem("Produzir", Icons.Default.Add, 4),
+        BottomNavItem("Exposições", Icons.Default.PhotoLibrary, 5)
     )
     var currentScreen by remember { mutableStateOf("list") }
-    var showDialog by remember { mutableStateOf(false) }
-    var dialogMessage by remember { mutableStateOf("") }
 
     Scaffold(
         topBar = {
@@ -104,33 +106,59 @@ fun AcervoScreen() {
             )
         },
         bottomBar = {
-            NavigationBar(
-                containerColor = Color.White,
-                modifier = Modifier.height(80.dp)
+            Surface(
+                tonalElevation = 0.dp,
+                shadowElevation = 16.dp,
+                color = Color.White
             ) {
-                navigationItems.forEach { item ->
-                    NavigationBarItem(
-                        selected = selectedItemIndex == item.index,
-                        onClick = {
-                            selectedItemIndex = item.index
-                            when (item.index) {
-                                0 -> navigateToHome(context)
-                                1 -> { /* já está em Acervo */ }
-                                2 -> { /* TODO: Emprestimos */ }
-                                3 -> navigateToReservations(context)
-                                4 -> { /* TODO: Relatórios */ }
-                            }
-                        },
-                        label = { Text(item.label, fontSize = 9.sp) },
-                        icon = { Icon(item.icon, contentDescription = item.label) },
-                        colors = NavigationBarItemDefaults.colors(
-                            selectedIconColor = MaterialTheme.colorScheme.primary,
-                            selectedTextColor = MaterialTheme.colorScheme.primary,
-                            unselectedIconColor = Color(0xFF666666),
-                            unselectedTextColor = Color(0xFF666666),
-                            indicatorColor = Color.Transparent
+                NavigationBar(
+                    containerColor = Color.White,
+                    tonalElevation = 0.dp,
+                    modifier = Modifier
+                        .height(80.dp)
+                        .padding(vertical = 8.dp, horizontal = 4.dp)
+                ) {
+                    navigationItems.forEach { item ->
+                        NavigationBarItem(
+                            selected = selectedItemIndex == item.index,
+                            onClick = {
+                                selectedItemIndex = item.index
+                                when (item.index) {
+                                    0 -> navigateToHome(context)
+                                    1 -> { /* já está em Acervo */ }
+                                    2 -> navigateToEmprestimos(context)
+                                    3 -> navigateToReservations(context)
+                                    4 -> navigateToProduzir(context)
+                                    5 -> navigateToExposicoes(context)
+                                }
+                            },
+                            label = {
+                                Text(
+                                    item.label,
+                                    fontSize = 9.sp,
+                                    maxLines = 2,
+                                    textAlign = TextAlign.Center,
+                                    lineHeight = 11.sp,
+                                    fontWeight = if (selectedItemIndex == item.index)
+                                        FontWeight.Bold else FontWeight.Medium
+                                )
+                            },
+                            icon = {
+                                Icon(
+                                    imageVector = item.icon,
+                                    contentDescription = item.label,
+                                    modifier = Modifier.size(24.dp)
+                                )
+                            },
+                            colors = NavigationBarItemDefaults.colors(
+                                selectedIconColor = MaterialTheme.colorScheme.primary,
+                                selectedTextColor = MaterialTheme.colorScheme.primary,
+                                unselectedIconColor = Color(0xFF666666),
+                                unselectedTextColor = Color(0xFF666666),
+                                indicatorColor = Color.Transparent
+                            )
                         )
-                    )
+                    }
                 }
             }
         },
@@ -155,7 +183,7 @@ fun AcervoScreen() {
             when (currentScreen) {
                 "list" -> {
                     Text(
-                        text = "Gerenciar Acervo",
+                        text = "Acervo",
                         fontSize = 22.sp,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.primary
@@ -171,27 +199,18 @@ fun AcervoScreen() {
                     )
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    // ALTERAÇÃO 1: Passando a nova função onRemove para o BookCard
                     BookCard(
-                        title = "PathExileLORE",
+                        title = "PathOfExileLORE",
                         subtitle = "Marak - 2020",
                         rating = "★5",
-                        onEdit = { currentScreen = "edit" },
-                        onRemove = {
-                            dialogMessage = "Tem certeza que deseja remover esta obra?"
-                            showDialog = true
-                        }
+                        onReserveClick = { navigateToBookDetail(context) }
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     BookCard(
                         title = "WOW",
                         subtitle = "Aliens - 1977",
                         rating = "★4.8",
-                        onEdit = { currentScreen = "edit" },
-                        onRemove = {
-                            dialogMessage = "Tem certeza que deseja remover esta obra?"
-                            showDialog = true
-                        }
+                        onReserveClick = { navigateToBookDetail(context) }
                     )
                 }
 
@@ -199,57 +218,45 @@ fun AcervoScreen() {
                     AddEditContent(
                         title = "Adicionar Acervo",
                         onBack = { currentScreen = "list" },
-                        onConfirm = {
-                            dialogMessage = "Tem certeza que deseja adicionar a obra ao acervo?"
-                            showDialog = true
-                        }
-                    )
-                }
-
-                "edit" -> {
-                    AddEditContent(
-                        title = "Editar Acervo",
-                        onBack = { currentScreen = "list" },
-                        onConfirm = {
-                            dialogMessage = "Tem certeza que deseja editar a obra do acervo?"
-                            showDialog = true
-                        }
+                        onConfirm = {}
                     )
                 }
             }
         }
     }
-
-    if (showDialog) {
-        ConfirmDialog(
-            message = dialogMessage,
-            onDismiss = { showDialog = false },
-            onConfirm = {
-                showDialog = false
-                // Lógica de confirmação aqui (adicionar, editar ou remover)
-            }
-        )
-    }
 }
 
-// ALTERAÇÃO 2: Adicionamos um novo parâmetro 'onRemove' para que o Card possa "avisar" a tela.
 @Composable
-fun BookCard(title: String, subtitle: String, rating: String, onEdit: () -> Unit, onRemove: () -> Unit) {
+fun BookCard(title: String, subtitle: String, rating: String, onReserveClick: () -> Unit) {
     Card(
         Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = Color.White),
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
-        Column(Modifier.padding(12.dp)) {
-            Text(title, fontWeight = FontWeight.Bold, fontSize = 18.sp)
-            Text(subtitle, color = Color.Gray, fontSize = 14.sp)
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(rating, color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.SemiBold)
-            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
-                TextButton(onClick = onEdit) { Text("Editar") }
-                // Agora o botão de remover chama a função que foi passada para ele.
-                TextButton(onClick = onRemove) { Text("Remover") }
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(12.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column(modifier = Modifier.weight(1f)) {
+                Text(title, fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                Text(subtitle, color = Color.Gray, fontSize = 14.sp)
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(rating, color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.SemiBold)
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    "Disponível",
+                    color = Color(0xFF388E3C), // Green color
+                    fontWeight = FontWeight.Bold
+                )
+            }
+            Spacer(modifier = Modifier.width(8.dp))
+            Button(
+                onClick = onReserveClick,
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
+            ) {
+                Text("Reservar")
             }
         }
     }
@@ -301,23 +308,7 @@ fun AddEditContent(title: String, onBack: () -> Unit, onConfirm: () -> Unit) {
     }
 }
 
-// ALTERAÇÃO 3: Trocando o texto dos botões para ficar mais genérico e atender sua solicitação.
-@Composable
-fun ConfirmDialog(message: String, onDismiss: () -> Unit, onConfirm: () -> Unit) {
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text(message, textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth()) },
-        confirmButton = {
-            TextButton(onClick = onConfirm) { Text("Confirmar", color = MaterialTheme.colorScheme.primary) }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismiss) { Text("Cancelar") }
-        },
-        shape = RoundedCornerShape(20.dp)
-    )
-}
-
-// Navigation helpers (usadas pelo bottom nav)
+// Navigation helpers
 private fun navigateToHome(context: Context) {
     val intent = Intent(context, HomeActivity::class.java)
     context.startActivity(intent)
@@ -330,6 +321,31 @@ private fun navigateToReservations(context: Context) {
 
 private fun navigateToProfile(context: Context) {
     val intent = Intent(context, EditProfileActivity::class.java)
+    context.startActivity(intent)
+}
+
+private fun navigateToProduzir(context: Context) {
+    val intent = Intent(context, ProduzirActivity::class.java)
+    context.startActivity(intent)
+}
+
+private fun navigateToAcervo(context: Context) {
+    val intent = Intent(context, AcervoActivity::class.java)
+    context.startActivity(intent)
+}
+
+private fun navigateToExposicoes(context: Context) {
+    val intent = Intent(context, ExposicoesActivity::class.java)
+    context.startActivity(intent)
+}
+
+private fun navigateToBookDetail(context: Context) {
+    val intent = Intent(context, BookDetailActivity::class.java)
+    context.startActivity(intent)
+}
+
+private fun navigateToEmprestimos(context: Context) {
+    val intent = Intent(context, EmprestimosActivity::class.java)
     context.startActivity(intent)
 }
 

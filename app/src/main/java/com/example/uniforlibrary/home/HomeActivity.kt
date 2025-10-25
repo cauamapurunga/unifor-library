@@ -35,7 +35,12 @@ import androidx.compose.ui.unit.sp
 import com.example.uniforlibrary.R
 import com.example.uniforlibrary.acervo.AcervoActivity
 import com.example.uniforlibrary.notification.NotificationActivity
+import com.example.uniforlibrary.components.UserBottomNav
+import com.example.uniforlibrary.emprestimos.EmprestimosActivity
+import com.example.uniforlibrary.exposicoes.ExposicoesActivity
+import com.example.uniforlibrary.produzir.ProduzirActivity
 import com.example.uniforlibrary.profile.EditProfileActivity
+import com.example.uniforlibrary.reservation.MyReservationsActivity
 import com.example.uniforlibrary.ui.theme.UniforLibraryTheme
 
 class HomeActivity : ComponentActivity() {
@@ -53,16 +58,6 @@ class HomeActivity : ComponentActivity() {
 @Composable
 fun HomeScreen() {
     val context = LocalContext.current
-    var selectedItemIndex by remember { mutableIntStateOf(0) }
-
-    val navigationItems = listOf(
-        BottomNavItem("Home", Icons.Default.Home, 0),
-        BottomNavItem("Acervo", Icons.AutoMirrored.Filled.MenuBook, 1),
-        BottomNavItem("Empréstimos", Icons.Default.Book, 2),
-        BottomNavItem("Reservas", Icons.Default.Bookmark, 3),
-        BottomNavItem("Produzir", Icons.Default.Add, 4),
-        BottomNavItem("Exposições", Icons.Default.PhotoLibrary, 5)
-    )
 
     Scaffold(
         topBar = {
@@ -79,10 +74,9 @@ fun HomeScreen() {
                         )
                         Spacer(modifier = Modifier.width(12.dp))
                         Text(
-                            text = "Biblioteca\nCentral",
+                            text = "Biblioteca Central",
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Bold,
-                            lineHeight = 18.sp,
                             color = Color.White
                         )
                     }
@@ -163,6 +157,7 @@ fun HomeScreen() {
                     }
                 }
             }
+            UserBottomNav(context = context, selectedItemIndex = 0)
         }
     ) { innerPadding ->
         Column(
@@ -190,7 +185,11 @@ fun HomeScreen() {
             Spacer(modifier = Modifier.height(12.dp))
 
             QuickAccessGrid(
-                onReservationsClick = { navigateToReservations(context) }
+                onAcervoClick = { context.startActivity(Intent(context, AcervoActivity::class.java)) },
+                onEmprestimosClick = { context.startActivity(Intent(context, EmprestimosActivity::class.java)) },
+                onReservationsClick = { context.startActivity(Intent(context, MyReservationsActivity::class.java)) },
+                onProduzirClick = { context.startActivity(Intent(context, ProduzirActivity::class.java)) },
+                onExposicoesClick = { context.startActivity(Intent(context, ExposicoesActivity::class.java)) }
             )
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -274,13 +273,19 @@ fun SearchBarSection() {
 }
 
 @Composable
-fun QuickAccessGrid(onReservationsClick: () -> Unit) {
+fun QuickAccessGrid(
+    onAcervoClick: () -> Unit,
+    onEmprestimosClick: () -> Unit,
+    onReservationsClick: () -> Unit,
+    onProduzirClick: () -> Unit,
+    onExposicoesClick: () -> Unit
+) {
     val quickAccessItems = listOf(
-        QuickAccessItem("Consultar acervo", Icons.AutoMirrored.Filled.MenuBook) { /* TODO */ },
-        QuickAccessItem("Meus Empréstimos", Icons.Default.Book) { /* TODO */ },
+        QuickAccessItem("Consultar acervo", Icons.AutoMirrored.Filled.MenuBook, onAcervoClick),
+        QuickAccessItem("Meus Empréstimos", Icons.Default.Book, onEmprestimosClick),
         QuickAccessItem("Reservas", Icons.Default.Bookmark, onReservationsClick),
-        QuickAccessItem("Submeter\nProdução", Icons.Default.FileUpload) { /* TODO */ },
-        QuickAccessItem("Exposições\ndos alunos", Icons.Default.PhotoLibrary) { /* TODO */ }
+        QuickAccessItem("Submeter\nProdução", Icons.Default.FileUpload, onProduzirClick),
+        QuickAccessItem("Exposições\ndos alunos", Icons.Default.PhotoLibrary, onExposicoesClick)
     )
 
     LazyVerticalGrid(
@@ -426,6 +431,10 @@ fun HighlightChip(text: String) {
  fun navigateToProfile(context: Context) {
     val intent = Intent(context, EditProfileActivity::class.java)
     context.startActivity(intent)
+
+// Função para navegar para a tela de Perfil
+private fun navigateToProfile(context: Context) {
+    context.startActivity(Intent(context, EditProfileActivity::class.java))
 }
 
  fun navigateToNotifications(context: Context){
@@ -438,12 +447,6 @@ fun navigateToAcervo(context: Context){
     context.startActivity(intent)
 }
 // --- Modelos de Dados ---
-
-data class BottomNavItem(
-    val label: String,
-    val icon: ImageVector,
-    val index: Int
-)
 
 data class QuickAccessItem(
     val label: String,
