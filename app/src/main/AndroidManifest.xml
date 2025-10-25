@@ -119,7 +119,7 @@
             android:theme="@style/Theme.UniforLibrary" />
 
         <activity
-            android:name=".reservasAdm.ReservasAdm_Activity"
+            android:name=".reservasAdm.ReservasADM_activity"
             android:exported="false"
             android:label="Gerenciar Reservas"
             android:theme="@style/Theme.UniforLibrary" />

@@ -33,7 +33,7 @@ import com.example.uniforlibrary.acervoAdm.AcervoAdm_Activity
 import com.example.uniforlibrary.exposicoesAdm.ExposicoesAdm_Activity
 import com.example.uniforlibrary.profile.EditProfileActivity
 import com.example.uniforlibrary.relatoriosAdm.RelatoriosAdm_Activity
-import com.example.uniforlibrary.reservasAdm.ReservasAdm_Activity
+import com.example.uniforlibrary.reservasAdm.ReservasADM_activity
 import com.example.uniforlibrary.ui.theme.UniforLibraryTheme
 
 class HomeAdm_Activity : ComponentActivity() {
@@ -223,7 +223,7 @@ private fun navigateToExposicoesAdm(context: Context) {
 }
 
 private fun navigateToReservasAdm(context: Context) {
-    context.startActivity(Intent(context, ReservasAdm_Activity::class.java))
+    context.startActivity(Intent(context, ReservasADM_activity::class.java))
 }
 
 private fun navigateToRelatoriosAdm(context: Context) {

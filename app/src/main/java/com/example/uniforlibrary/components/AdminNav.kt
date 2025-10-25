@@ -24,7 +24,7 @@ import com.example.uniforlibrary.acervoAdm.AcervoAdm_Activity
 import com.example.uniforlibrary.exposicoesAdm.ExposicoesAdm_Activity
 import com.example.uniforlibrary.homeAdm.HomeAdm_Activity
 import com.example.uniforlibrary.relatoriosAdm.RelatoriosAdm_Activity
-import com.example.uniforlibrary.reservasAdm.ReservasAdm_Activity
+import com.example.uniforlibrary.reservasAdm.ReservasADM_activity
 
 @Composable
 fun AdminBottomNav(context: Context, selectedItemIndex: Int) {
@@ -32,7 +32,7 @@ fun AdminBottomNav(context: Context, selectedItemIndex: Int) {
         AdminBottomNavItem("Home", Icons.Default.Home, 0) { context.startActivity(Intent(context, HomeAdm_Activity::class.java)) },
         AdminBottomNavItem("Acervo", Icons.AutoMirrored.Filled.MenuBook, 1) { context.startActivity(Intent(context, AcervoAdm_Activity::class.java)) },
         AdminBottomNavItem("Exposições", Icons.Default.PhotoLibrary, 2) { context.startActivity(Intent(context, ExposicoesAdm_Activity::class.java)) },
-        AdminBottomNavItem("Reservas", Icons.Default.Bookmark, 3) { context.startActivity(Intent(context, ReservasAdm_Activity::class.java)) },
+        AdminBottomNavItem("Reservas", Icons.Default.Bookmark, 3) { context.startActivity(Intent(context, ReservasADM_activity::class.java)) },
         AdminBottomNavItem("Relatórios", Icons.Default.Assessment, 4) { context.startActivity(Intent(context, RelatoriosAdm_Activity::class.java)) }
     )
 
